@@ -9,10 +9,21 @@
   <style>
     :root {
       --primary: #6e00ff;
+      --primary-light: rgba(110, 0, 255, 0.2);
       --secondary: #00f0ff;
+      --secondary-light: rgba(0, 240, 255, 0.2);
       --dark: #0a0a20;
+      --darker: #070714;
       --light: #f0f5ff;
+      --light-transparent: rgba(240, 245, 255, 0.7);
       --accent: #ff00aa;
+      --accent-light: rgba(255, 0, 170, 0.2);
+      --card-bg: rgba(10, 10, 32, 0.7);
+      --border-radius: 12px;
+    }
+    
+    * {
+      box-sizing: border-box;
     }
     
     body {
@@ -23,8 +34,9 @@
       color: var(--light);
       overflow-x: hidden;
       background-image: 
-        radial-gradient(circle at 10% 20%, rgba(110, 0, 255, 0.15) 0%, transparent 20%),
-        radial-gradient(circle at 90% 80%, rgba(0, 240, 255, 0.15) 0%, transparent 20%);
+        radial-gradient(circle at 10% 20%, var(--primary-light) 0%, transparent 20%),
+        radial-gradient(circle at 90% 80%, var(--secondary-light) 0%, transparent 20%);
+      min-height: 100vh;
     }
 
     .header {
@@ -33,6 +45,9 @@
       margin-bottom: 24px;
       padding: 24px 16px 0;
       position: relative;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
     }
 
     .back-btn {
@@ -44,10 +59,17 @@
       margin-right: 12px;
       transition: all 0.3s ease;
       z-index: 2;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
     }
 
     .back-btn:hover {
       color: var(--secondary);
+      background: var(--secondary-light);
       transform: translateX(-3px);
     }
 
@@ -64,6 +86,9 @@
       letter-spacing: 1px;
       position: relative;
       z-index: 2;
+      flex-grow: 1;
+      text-align: center;
+      padding-right: 40px; /* balance the back button space */
     }
 
     .container {
@@ -73,22 +98,29 @@
       position: relative;
     }
 
+    .cards-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      padding-bottom: 20px;
+    }
+
     .card {
-      background: rgba(10, 10, 32, 0.7);
-      border-radius: 16px;
+      background: var(--card-bg);
+      border-radius: var(--border-radius);
       padding: 20px;
-      margin-bottom: 16px;
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
       display: flex;
       justify-content: space-between;
       align-items: center;
       cursor: pointer;
-      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
       position: relative;
       overflow: hidden;
       border: 1px solid rgba(110, 0, 255, 0.3);
       backdrop-filter: blur(8px);
       z-index: 1;
+      min-height: 90px;
     }
 
     .card::before {
@@ -103,10 +135,11 @@
       filter: blur(8px);
       opacity: 0;
       transition: opacity 0.4s ease;
+      border-radius: var(--border-radius);
     }
 
     .card:hover {
-      transform: translateY(-5px) scale(1.02);
+      transform: translateY(-5px);
       box-shadow: 0 12px 40px rgba(110, 0, 255, 0.4);
       border-color: rgba(110, 0, 255, 0.6);
     }
@@ -119,6 +152,8 @@
       display: flex;
       flex-direction: column;
       z-index: 1;
+      flex-grow: 1;
+      min-width: 0; /* prevents flex overflow */
     }
 
     .card-title {
@@ -129,6 +164,9 @@
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .card-sub {
@@ -136,18 +174,22 @@
       color: rgba(255, 255, 255, 0.7);
       display: flex;
       gap: 12px;
+      flex-wrap: wrap;
     }
 
     .card-sub span {
       display: flex;
       align-items: center;
       gap: 4px;
+      white-space: nowrap;
     }
 
     .arrow {
       font-size: 24px;
       color: var(--secondary);
-      transition: transform 0.3s ease;
+      transition: all 0.3s ease;
+      flex-shrink: 0;
+      margin-left: 10px;
     }
 
     .card:hover .arrow {
@@ -164,6 +206,7 @@
       height: 100%;
       z-index: 0;
       pointer-events: none;
+      overflow: hidden;
     }
 
     .particle {
@@ -172,26 +215,28 @@
       border-radius: 50%;
       filter: blur(2px);
       animation: float linear infinite;
+      will-change: transform;
     }
 
     @keyframes float {
       0% {
-        transform: translateY(0) rotate(0deg);
+        transform: translateY(100vh) rotate(0deg);
       }
       100% {
-        transform: translateY(-100vh) rotate(360deg);
+        transform: translateY(-20vh) rotate(360deg);
       }
     }
 
     /* Holographic effect */
     .holographic-line {
-      position: absolute;
+      position: fixed;
       height: 1px;
       width: 100%;
       background: linear-gradient(90deg, transparent, var(--secondary), transparent);
-      opacity: 0.3;
+      opacity: 0.1;
       animation: scan 8s linear infinite;
       z-index: 0;
+      pointer-events: none;
     }
 
     @keyframes scan {
@@ -203,34 +248,16 @@
       }
     }
 
-    /* Responsive */
-    @media (max-width: 480px) {
-      h1 {
-        font-size: 20px;
-      }
-      
-      .card {
-        padding: 16px;
-      }
-
-      .card-title {
-        font-size: 16px;
-      }
-
-      .card-sub {
-        font-size: 12px;
-      }
-    }
-
-    /* Special animation for physics theme */
+    /* Quantum dots animation */
     .quantum-dots {
-      position: absolute;
+      position: fixed;
       width: 100%;
       height: 100%;
       top: 0;
       left: 0;
       z-index: -1;
       overflow: hidden;
+      pointer-events: none;
     }
 
     .quantum-dot {
@@ -239,50 +266,107 @@
       height: 4px;
       border-radius: 50%;
       background-color: var(--secondary);
-      opacity: 0.3;
+      opacity: 0;
       animation: quantum 15s infinite ease-in-out;
+      will-change: transform;
     }
 
     @keyframes quantum {
-      0%, 100% {
+      0% {
         transform: translate(0, 0);
-        opacity: 0.1;
+        opacity: 0;
       }
-      25% {
-        transform: translate(20vw, 30vh);
+      10% {
         opacity: 0.6;
       }
-      50% {
-        transform: translate(-15vw, 50vh);
-        opacity: 0.3;
+      90% {
+        opacity: 0.6;
       }
-      75% {
-        transform: translate(10vw, -20vh);
-        opacity: 0.8;
+      100% {
+        transform: translate(40vw, -30vh);
+        opacity: 0;
       }
     }
 
     /* Glitch effect on hover */
     .card:hover .card-title {
-      animation: glitch 0.5s linear infinite;
+      animation: glitch 0.5s linear 2;
     }
 
     @keyframes glitch {
       0% {
-        text-shadow: 2px 0 var(--primary), -2px 0 var(--accent);
+        text-shadow: 1px 0 var(--primary), -1px 0 var(--accent);
       }
       25% {
-        text-shadow: -2px 0 var(--primary), 2px 0 var(--accent);
+        text-shadow: -1px 0 var(--primary), 1px 0 var(--accent);
       }
       50% {
-        text-shadow: 2px 0 var(--accent), -2px 0 var(--primary);
+        text-shadow: 1px 0 var(--accent), -1px 0 var(--primary);
       }
       75% {
-        text-shadow: -2px 0 var(--accent), 2px 0 var(--primary);
+        text-shadow: -1px 0 var(--accent), 1px 0 var(--primary);
       }
       100% {
-        text-shadow: 2px 0 var(--primary), -2px 0 var(--accent);
+        text-shadow: 1px 0 var(--primary), -1px 0 var(--accent);
       }
+    }
+
+    /* Ripple effect */
+    .ripple-effect {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.3);
+      transform: scale(0);
+      animation: ripple 0.6s ease-out;
+      pointer-events: none;
+      width: 20px;
+      height: 20px;
+      mix-blend-mode: screen;
+      will-change: transform, opacity;
+    }
+    
+    @keyframes ripple {
+      to {
+        transform: scale(20);
+        opacity: 0;
+      }
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 20px;
+        padding-right: 30px;
+      }
+      
+      .card {
+        padding: 16px;
+        min-height: 80px;
+      }
+
+      .card-title {
+        font-size: 16px;
+      }
+
+      .card-sub {
+        font-size: 12px;
+        gap: 8px;
+      }
+      
+      .arrow {
+        font-size: 20px;
+      }
+      
+      .back-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 20px;
+      }
+    }
+
+    /* Smooth scroll behavior */
+    html {
+      scroll-behavior: smooth;
     }
   </style>
 </head>
@@ -297,304 +381,316 @@
       <button class="back-btn" onclick="window.location.href='https://itsunknown696.github.io/pw/subjects.html'">
         <i class="bi bi-arrow-left"></i>
       </button>
-      <h1> Maths</h1>
+      <h1>Maths</h1>
     </div>
 
-    <div class="card" onclick="window.location.href='Maths/Mind_Map_Only_Pdf.html'">
-      <div class="card-content">
-        <div class="card-title">Mind Maps || Only PDF</div>
-        <div class="card-sub">
-          <span><i class="bi bi-play-circle"></i> 0 Videos</span>
-          <span><i class="bi bi-activity"></i> 0 Exercises</span>
-          <span><i class="bi bi-file-text"></i> 15 Notes</span>
+    <div class="cards-grid">
+      <div class="card" onclick="navigateTo('Maths/Mind_Map_Only_Pdf.html')">
+        <div class="card-content">
+          <div class="card-title">Mind Maps || Only PDF</div>
+          <div class="card-sub">
+            <span><i class="bi bi-play-circle"></i> 0 Videos</span>
+            <span><i class="bi bi-activity"></i> 0 Exercises</span>
+            <span><i class="bi bi-file-text"></i> 15 Notes</span>
+          </div>
         </div>
+        <div class="arrow">›</div>
       </div>
-      <div class="arrow">›</div>
-    </div>
 
-    <div class="card" onclick="window.location.href='Maths/PYQ_Practice_Sheet_Only_PDF.html'">
-      <div class="card-content">
-        <div class="card-title">PYQ Practice Sheet || (Only PDF)</div>
-        <div class="card-sub">
-          <span><i class="bi bi-play-circle"></i> 0 Videos</span>
-          <span><i class="bi bi-activity"></i> 29 Exercises</span>
-          <span><i class="bi bi-file-text"></i> 0 Notes</span>
+      <div class="card" onclick="navigateTo('Maths/PYQ_Practice_Sheet_Only_PDF.html')">
+        <div class="card-content">
+          <div class="card-title">PYQ Practice Sheet || (Only PDF)</div>
+          <div class="card-sub">
+            <span><i class="bi bi-play-circle"></i> 0 Videos</span>
+            <span><i class="bi bi-activity"></i> 29 Exercises</span>
+            <span><i class="bi bi-file-text"></i> 0 Notes</span>
+          </div>
         </div>
+        <div class="arrow">›</div>
       </div>
-      <div class="arrow">›</div>
-    </div>
 
-    <div class="card" onclick="window.location.href='Maths/Short_Notes_Only_PDF.html'">
-      <div class="card-content">
-        <div class="card-title">Short Notes || Only PDF</div>
-        <div class="card-sub">
-          <span><i class="bi bi-play-circle"></i> 0 Videos</span>
-          <span><i class="bi bi-activity"></i> 0 Exercises</span>
-          <span><i class="bi bi-file-text"></i> 14 Notes</span>
+      <div class="card" onclick="navigateTo('Maths/Short_Notes_Only_PDF.html')">
+        <div class="card-content">
+          <div class="card-title">Short Notes || Only PDF</div>
+          <div class="card-sub">
+            <span><i class="bi bi-play-circle"></i> 0 Videos</span>
+            <span><i class="bi bi-activity"></i> 0 Exercises</span>
+            <span><i class="bi bi-file-text"></i> 14 Notes</span>
+          </div>
         </div>
+        <div class="arrow">›</div>
       </div>
-      <div class="arrow">›</div>
-    </div>
 
-    <div class="card" onclick="window.location.href='Maths/11th_Basic_Revision.html'">
-      <div class="card-content">
-        <div class="card-title">11th Basic Revision</div>
-        <div class="card-sub">
-          <span><i class="bi bi-play-circle"></i> 2 Videos</span>
-          <span><i class="bi bi-activity"></i> 0 Exercises</span>
-          <span><i class="bi bi-file-text"></i> 2 Notes</span>
+      <div class="card" onclick="navigateTo('Maths/11th_Basic_Revision.html')">
+        <div class="card-content">
+          <div class="card-title">11th Basic Revision</div>
+          <div class="card-sub">
+            <span><i class="bi bi-play-circle"></i> 2 Videos</span>
+            <span><i class="bi bi-activity"></i> 0 Exercises</span>
+            <span><i class="bi bi-file-text"></i> 2 Notes</span>
+          </div>
         </div>
+        <div class="arrow">›</div>
       </div>
-      <div class="arrow">›</div>
-    </div>
 
-    <div class="card" onclick="window.location.href='Maths/Complete_XII_NCERT_By_Ashish_Sir_Only_Pdf.html'">
-      <div class="card-content">
-        <div class="card-title">Complete XII NCERT By Ashish Sir || Only PDF</div>
-        <div class="card-sub">
-          <span><i class="bi bi-play-circle"></i> 0 Videos</span>
-          <span><i class="bi bi-activity"></i> 0 Exercises</span>
-          <span><i class="bi bi-file-text"></i> 1 Notes</span>
+      <div class="card" onclick="navigateTo('Maths/Complete_XII_NCERT_By_Ashish_Sir_Only_Pdf.html')">
+        <div class="card-content">
+          <div class="card-title">Complete XII NCERT By Ashish Sir || Only PDF</div>
+          <div class="card-sub">
+            <span><i class="bi bi-play-circle"></i> 0 Videos</span>
+            <span><i class="bi bi-activity"></i> 0 Exercises</span>
+            <span><i class="bi bi-file-text"></i> 1 Notes</span>
+          </div>
         </div>
+        <div class="arrow">›</div>
       </div>
-      <div class="arrow">›</div>
-    </div>
 
-    <div class="card" onclick="window.location.href='Maths/Study_Modules_Only_PDF.html'">
-      <div class="card-content">
-        <div class="card-title">Study Modules || Only PDF</div>
-        <div class="card-sub">
-          <span><i class="bi bi-play-circle"></i> 0 Videos</span>
-          <span><i class="bi bi-activity"></i> 0 Exercises</span>
-          <span><i class="bi bi-file-text"></i> 1 Notes</span>
+      <div class="card" onclick="navigateTo('Maths/Study_Modules_Only_PDF.html')">
+        <div class="card-content">
+          <div class="card-title">Study Modules || Only PDF</div>
+          <div class="card-sub">
+            <span><i class="bi bi-play-circle"></i> 0 Videos</span>
+            <span><i class="bi bi-activity"></i> 0 Exercises</span>
+            <span><i class="bi bi-file-text"></i> 1 Notes</span>
+          </div>
         </div>
+        <div class="arrow">›</div>
       </div>
-      <div class="arrow">›</div>
-    </div>
 
-    <div class="card" onclick="window.location.href='Maths/Excellence_Sheet.html'">
-      <div class="card-content">
-        <div class="card-title">Excellence Sheet</div>
-        <div class="card-sub">
-          <span><i class="bi bi-play-circle"></i> 0 Videos</span>
-          <span><i class="bi bi-activity"></i> 0 Exercises</span>
-          <span><i class="bi bi-file-text"></i> 1 Notes</span>
+      <div class="card" onclick="navigateTo('Maths/Excellence_Sheet.html')">
+        <div class="card-content">
+          <div class="card-title">Excellence Sheet</div>
+          <div class="card-sub">
+            <span><i class="bi bi-play-circle"></i> 0 Videos</span>
+            <span><i class="bi bi-activity"></i> 0 Exercises</span>
+            <span><i class="bi bi-file-text"></i> 1 Notes</span>
+          </div>
         </div>
+        <div class="arrow">›</div>
       </div>
-      <div class="arrow">›</div>
-    </div>
-  </div>
 
-  <div class="card" onclick="window.location.href='Maths/Handwritten_Ashish.html'">
-  <div class="card-content">
-    <div class="card-title">Handwritten Notes By Ashish Sir</div>
-    <div class="card-sub">
-      <span><i class="bi bi-play-circle"></i> 0 Videos</span>
-      <span><i class="bi bi-activity"></i> 0 Exercises</span>
-      <span><i class="bi bi-file-text"></i> 1 Notes</span>
-    </div>
-  </div>
-  <div class="arrow">›</div>
-</div>
+      <div class="card" onclick="navigateTo('Maths/Handwritten_Ashish.html')">
+        <div class="card-content">
+          <div class="card-title">Handwritten Notes By Ashish Sir</div>
+          <div class="card-sub">
+            <span><i class="bi bi-play-circle"></i> 0 Videos</span>
+            <span><i class="bi bi-activity"></i> 0 Exercises</span>
+            <span><i class="bi bi-file-text"></i> 1 Notes</span>
+          </div>
+        </div>
+        <div class="arrow">›</div>
+      </div>
 
-<div class="card" onclick="window.location.href='Maths/Question_PPT.html'">
-  <div class="card-content">
-    <div class="card-title">Question PPT</div>
-    <div class="card-sub">
-      <span><i class="bi bi-play-circle"></i> 0 Videos</span>
-      <span><i class="bi bi-activity"></i> 0 Exercises</span>
-      <span><i class="bi bi-file-text"></i> 1 Notes</span>
-    </div>
-  </div>
-  <div class="arrow">›</div>
-</div>
+      <div class="card" onclick="navigateTo('Maths/Question_PPT.html')">
+        <div class="card-content">
+          <div class="card-title">Question PPT</div>
+          <div class="card-sub">
+            <span><i class="bi bi-play-circle"></i> 0 Videos</span>
+            <span><i class="bi bi-activity"></i> 0 Exercises</span>
+            <span><i class="bi bi-file-text"></i> 1 Notes</span>
+          </div>
+        </div>
+        <div class="arrow">›</div>
+      </div>
 
-<div class="card" onclick="window.location.href='Maths/NCERT_Discussion.html'">
-  <div class="card-content">
-    <div class="card-title">NCERT Discussion</div>
-    <div class="card-sub">
-      <span><i class="bi bi-play-circle"></i> 2 Videos</span>
-      <span><i class="bi bi-activity"></i> 0 Exercises</span>
-      <span><i class="bi bi-file-text"></i> 2 Notes</span>
-    </div>
-  </div>
-  <div class="arrow">›</div>
-</div>
+      <div class="card" onclick="navigateTo('Maths/NCERT_Discussion.html')">
+        <div class="card-content">
+          <div class="card-title">NCERT Discussion</div>
+          <div class="card-sub">
+            <span><i class="bi bi-play-circle"></i> 2 Videos</span>
+            <span><i class="bi bi-activity"></i> 0 Exercises</span>
+            <span><i class="bi bi-file-text"></i> 2 Notes</span>
+          </div>
+        </div>
+        <div class="arrow">›</div>
+      </div>
 
-<div class="card" onclick="window.location.href='Maths/20min_Practice.html'">
-  <div class="card-content">
-    <div class="card-title">Question Practice in 20 Minutes</div>
-    <div class="card-sub">
-      <span><i class="bi bi-play-circle"></i> 1 Videos</span>
-      <span><i class="bi bi-activity"></i> 0 Exercises</span>
-      <span><i class="bi bi-file-text"></i> 1 Notes</span>
-    </div>
-  </div>
-  <div class="arrow">›</div>
-</div>
+      <div class="card" onclick="navigateTo('Maths/20min_Practice.html')">
+        <div class="card-content">
+          <div class="card-title">Question Practice in 20 Minutes</div>
+          <div class="card-sub">
+            <span><i class="bi bi-play-circle"></i> 1 Videos</span>
+            <span><i class="bi bi-activity"></i> 0 Exercises</span>
+            <span><i class="bi bi-file-text"></i> 1 Notes</span>
+          </div>
+        </div>
+        <div class="arrow">›</div>
+      </div>
 
-<div class="card" onclick="window.location.href='Maths/Handwritten_Notes.html'">
-  <div class="card-content">
-    <div class="card-title">Handwritten Notes</div>
-    <div class="card-sub">
-      <span><i class="bi bi-play-circle"></i> 0 Videos</span>
-      <span><i class="bi bi-activity"></i> 0 Exercises</span>
-      <span><i class="bi bi-file-text"></i> 1 Notes</span>
-    </div>
-  </div>
-  <div class="arrow">›</div>
-</div>
+      <div class="card" onclick="navigateTo('Maths/Handwritten_Notes.html')">
+        <div class="card-content">
+          <div class="card-title">Handwritten Notes</div>
+          <div class="card-sub">
+            <span><i class="bi bi-play-circle"></i> 0 Videos</span>
+            <span><i class="bi bi-activity"></i> 0 Exercises</span>
+            <span><i class="bi bi-file-text"></i> 1 Notes</span>
+          </div>
+        </div>
+        <div class="arrow">›</div>
+      </div>
 
-<div class="card" onclick="window.location.href='Maths/JEE_Main_Sheet.html'">
-  <div class="card-content">
-    <div class="card-title">Standard Practice Sheet (JEE Main)</div>
-    <div class="card-sub">
-      <span><i class="bi bi-play-circle"></i> 0 Videos</span>
-      <span><i class="bi bi-activity"></i> 0 Exercises</span>
-      <span><i class="bi bi-file-text"></i> 1 Notes</span>
-    </div>
-  </div>
-  <div class="arrow">›</div>
-</div>
+      <div class="card" onclick="navigateTo('Maths/JEE_Main_Sheet.html')">
+        <div class="card-content">
+          <div class="card-title">Standard Practice Sheet (JEE Main)</div>
+          <div class="card-sub">
+            <span><i class="bi bi-play-circle"></i> 0 Videos</span>
+            <span><i class="bi bi-activity"></i> 0 Exercises</span>
+            <span><i class="bi bi-file-text"></i> 1 Notes</span>
+          </div>
+        </div>
+        <div class="arrow">›</div>
+      </div>
 
-<div class="card" onclick="window.location.href='Maths/JEE_Advanced_Sheet.html'">
-  <div class="card-content">
-    <div class="card-title">Standard Practice Sheet (JEE Advanced)</div>
-    <div class="card-sub">
-      <span><i class="bi bi-play-circle"></i> 0 Videos</span>
-      <span><i class="bi bi-activity"></i> 0 Exercises</span>
-      <span><i class="bi bi-file-text"></i> 1 Notes</span>
-    </div>
-  </div>
-  <div class="arrow">›</div>
-</div>
+      <div class="card" onclick="navigateTo('Maths/JEE_Advanced_Sheet.html')">
+        <div class="card-content">
+          <div class="card-title">Standard Practice Sheet (JEE Advanced)</div>
+          <div class="card-sub">
+            <span><i class="bi bi-play-circle"></i> 0 Videos</span>
+            <span><i class="bi bi-activity"></i> 0 Exercises</span>
+            <span><i class="bi bi-file-text"></i> 1 Notes</span>
+          </div>
+        </div>
+        <div class="arrow">›</div>
+      </div>
 
-<div class="card" onclick="window.location.href='Maths/Determinants.html'">
-  <div class="card-content">
-    <div class="card-title">Ch-01 : Determinants</div>
-    <div class="card-sub">
-      <span><i class="bi bi-play-circle"></i> 10 Videos</span>
-      <span><i class="bi bi-activity"></i> 6 Exercises</span>
-      <span><i class="bi bi-file-text"></i> 16 Notes</span>
-    </div>
-  </div>
-  <div class="arrow">›</div>
-</div>
+      <div class="card" onclick="navigateTo('Maths/Determinants.html')">
+        <div class="card-content">
+          <div class="card-title">Ch-01 : Determinants</div>
+          <div class="card-sub">
+            <span><i class="bi bi-play-circle"></i> 10 Videos</span>
+            <span><i class="bi bi-activity"></i> 6 Exercises</span>
+            <span><i class="bi bi-file-text"></i> 16 Notes</span>
+          </div>
+        </div>
+        <div class="arrow">›</div>
+      </div>
 
-<div class="card" onclick="window.location.href='Maths/Matrices.html'">
-  <div class="card-content">
-    <div class="card-title">Ch-02 : Matrices</div>
-    <div class="card-sub">
-      <span><i class="bi bi-play-circle"></i> 12 Videos</span>
-      <span><i class="bi bi-activity"></i> 6 Exercises</span>
-      <span><i class="bi bi-file-text"></i> 18 Notes</span>
+      <div class="card" onclick="navigateTo('Maths/Matrices.html')">
+        <div class="card-content">
+          <div class="card-title">Ch-02 : Matrices</div>
+          <div class="card-sub">
+            <span><i class="bi bi-play-circle"></i> 12 Videos</span>
+            <span><i class="bi bi-activity"></i> 6 Exercises</span>
+            <span><i class="bi bi-file-text"></i> 18 Notes</span>
+          </div>
+        </div>
+        <div class="arrow">›</div>
+      </div>
     </div>
   </div>
-  <div class="arrow">›</div>
-</div>
 
   <script>
-    // Create floating particles
-    const particlesContainer = document.getElementById('particles');
-    const particleCount = 30;
+    // Improved navigation with ripple effect
+    function navigateTo(url) {
+      window.location.href = url;
+    }
     
-    for (let i = 0; i < particleCount; i++) {
-      const particle = document.createElement('div');
-      particle.classList.add('particle');
+    // Create floating particles
+    function createParticles() {
+      const particlesContainer = document.getElementById('particles');
+      const particleCount = Math.floor(window.innerWidth / 20); // Responsive count
       
-      // Random size between 2px and 6px
-      const size = Math.random() * 4 + 2;
-      particle.style.width = `${size}px`;
-      particle.style.height = `${size}px`;
-      
-      // Random position
-      particle.style.left = `${Math.random() * 100}vw`;
-      particle.style.top = `${Math.random() * 100}vh`;
-      
-      // Random animation duration between 20s and 50s
-      particle.style.animationDuration = `${Math.random() * 30 + 20}s`;
-      
-      // Random delay
-      particle.style.animationDelay = `${Math.random() * 10}s`;
-      
-      // Random opacity
-      particle.style.opacity = Math.random() * 0.5 + 0.1;
-      
-      particlesContainer.appendChild(particle);
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add('particle');
+        
+        // Random size between 2px and 6px
+        const size = Math.random() * 4 + 2;
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        
+        // Random position
+        particle.style.left = `${Math.random() * 100}vw`;
+        particle.style.top = `${Math.random() * 120 - 20}vh`;
+        
+        // Random animation duration between 20s and 50s
+        const duration = Math.random() * 30 + 20;
+        particle.style.animationDuration = `${duration}s`;
+        
+        // Random delay
+        particle.style.animationDelay = `${Math.random() * 10}s`;
+        
+        // Random opacity
+        particle.style.opacity = Math.random() * 0.5 + 0.1;
+        
+        particlesContainer.appendChild(particle);
+      }
     }
 
     // Create quantum dots
-    const quantumContainer = document.getElementById('quantumDots');
-    const dotCount = 15;
-    
-    for (let i = 0; i < dotCount; i++) {
-      const dot = document.createElement('div');
-      dot.classList.add('quantum-dot');
+    function createQuantumDots() {
+      const quantumContainer = document.getElementById('quantumDots');
+      const dotCount = Math.floor(window.innerWidth / 30); // Responsive count
       
-      // Random position
-      dot.style.left = `${Math.random() * 100}vw`;
-      dot.style.top = `${Math.random() * 100}vh`;
-      
-      // Random animation duration between 10s and 20s
-      dot.style.animationDuration = `${Math.random() * 10 + 10}s`;
-      
-      // Random delay
-      dot.style.animationDelay = `${Math.random() * 5}s`;
-      
-      quantumContainer.appendChild(dot);
+      for (let i = 0; i < dotCount; i++) {
+        const dot = document.createElement('div');
+        dot.classList.add('quantum-dot');
+        
+        // Random position
+        dot.style.left = `${Math.random() * 100}vw`;
+        dot.style.top = `${Math.random() * 100}vh`;
+        
+        // Random animation duration between 10s and 20s
+        const duration = Math.random() * 10 + 10;
+        dot.style.animationDuration = `${duration}s`;
+        
+        // Random delay
+        dot.style.animationDelay = `${Math.random() * duration}s`;
+        
+        // Random size
+        const size = Math.random() * 3 + 2;
+        dot.style.width = `${size}px`;
+        dot.style.height = `${size}px`;
+        
+        quantumContainer.appendChild(dot);
+      }
     }
 
     // Add ripple effect to cards
-    const cards = document.querySelectorAll('.card');
-    cards.forEach(card => {
-      card.addEventListener('click', function(e) {
-        // Create ripple element
-        const ripple = document.createElement('span');
-        ripple.classList.add('ripple-effect');
-        
-        // Position ripple at click location
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        
-        ripple.style.left = `${x}px`;
-        ripple.style.top = `${y}px`;
-        
-        // Add to card
-        this.appendChild(ripple);
-        
-        // Remove after animation
-        setTimeout(() => {
-          ripple.remove();
-        }, 1000);
+    function setupRippleEffects() {
+      const cards = document.querySelectorAll('.card');
+      cards.forEach(card => {
+        card.addEventListener('click', function(e) {
+          // Create ripple element
+          const ripple = document.createElement('span');
+          ripple.classList.add('ripple-effect');
+          
+          // Position ripple at click location
+          const rect = card.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          
+          ripple.style.left = `${x}px`;
+          ripple.style.top = `${y}px`;
+          
+          // Add to card
+          this.appendChild(ripple);
+          
+          // Remove after animation
+          setTimeout(() => {
+            ripple.remove();
+          }, 600);
+        });
       });
-    });
+    }
 
-    // Add style for ripple effect
-    const style = document.createElement('style');
-    style.textContent = `
-      .ripple-effect {
-        position: absolute;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.7);
-        transform: scale(0);
-        animation: ripple 0.6s linear;
-        pointer-events: none;
-        width: 100px;
-        height: 100px;
-        margin-left: -50px;
-        margin-top: -50px;
-        mix-blend-mode: screen;
-      }
-      
-      @keyframes ripple {
-        to {
-          transform: scale(4);
-          opacity: 0;
-        }
-      }
-    `;
-    document.head.appendChild(style);
+    // Initialize all effects
+    function init() {
+      createParticles();
+      createQuantumDots();
+      setupRippleEffects();
+    }
+
+    // Start when DOM is loaded
+    document.addEventListener('DOMContentLoaded', init);
+
+    // Responsive adjustments on resize
+    window.addEventListener('resize', () => {
+      document.getElementById('particles').innerHTML = '';
+      document.getElementById('quantumDots').innerHTML = '';
+      createParticles();
+      createQuantumDots();
+    });
   </script>
 </body>
 </html>
